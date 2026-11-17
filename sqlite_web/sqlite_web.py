@@ -1551,7 +1551,7 @@ def fk_link(value, fk):
 link_re = re.compile(r'(?:https?://|mailto:)[^\s]+')
 
 @app.template_filter('value_filter')
-def value_filter(value, max_length=50):
+def value_filter(value, max_length=250):
     if isinstance(value, (int, float)):
         return value
 
