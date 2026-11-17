@@ -1,4 +1,4 @@
-FROM python:3-alpine3.7
+FROM python:3-alpine3.23
 ENV CFLAGS="-DSQLITE_DEFAULT_CACHE_SIZE=-8000 \
             -DSQLITE_DEFAULT_FOREIGN_KEYS=1 \
             -DSQLITE_DEFAULT_MEMSTATUS=0 \
@@ -34,16 +34,18 @@ RUN apk update \
       && tar xzf sqlite.tar.gz \
       && cd sqlite \
       && buildArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" \
-      && LIBS="-lm" PREFIX="/usr/local" ./configure --build="$buildArch" --disable-tcl --enable-shared --enable-static --enable-tempstore=always --prefix="/usr/local" \
+      && LIBS="-lm" PREFIX="/usr/local" ./configure --build="$buildArch" --disable-tcl --enable-shared --enable-static --prefix="/usr/local" \
       && make -j4 \
       && make install \
       && cd ../ \
       && rm -rf ./sqlite/ ./sqlite.tar.gz \
       && pip install --upgrade pip \
-      && pip install --no-cache-dir cython \
-      && pip install --no-cache-dir flask peewee sqlite-web \
+      && pip install --no-cache-dir cython gevent \
+      && pip install --no-cache-dir flask peewee pygments \
       && apk del .build-deps
+COPY . /src
+RUN pip install --no-cache-dir /src && rm -rf /src
 EXPOSE 8080
 VOLUME /data
 WORKDIR /data
-CMD sqlite_web -H 0.0.0.0 -x $SQLITE_DATABASE
+ENTRYPOINT ["sqlite_wsgi", "-H", "0.0.0.0"]

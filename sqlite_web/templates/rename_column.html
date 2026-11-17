@@ -17,11 +17,11 @@
   <div class="form-group">
     <label for="id_rename_to">Rename to</label>
     <input class="form-control" id="id_rename_to" name="rename_to" value="{% if rename_to %}{{ rename_to }}{% endif %}" />
-    <span class="help-block">
+    <span class="form-text text-muted">
       Note: new name cannot conflict with any existing column names.
     </span>
   </div>
-  <button class="btn btn-success" type="submit">Rename column</button>
+  <button class="btn btn-primary" type="submit">Rename column</button>
   <a class="btn btn-secondary" href="{{ url_for('table_structure', table=table) }}">Cancel</a>
 </form>
 {% endblock %}
